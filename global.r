@@ -22,7 +22,6 @@ library(rvest)
 # Load stock, sector information and indicators
 cf = read.csv('./data/con_f.csv', stringsAsFactors = F)
 con_cf = read.csv('./data/_con.csv', stringsAsFactors = F)
-#write.csv(stocks_w_sec, file = './data/stocks_w_sec.csv',row.names = F)
 stocks = read.csv('./data/all_stocks_1yr.csv', stringsAsFactors = F)
 
 # Load sector data
@@ -44,65 +43,65 @@ stocks = read.csv('./data/all_stocks_1yr.csv', stringsAsFactors = F)
 # sector_name = rep(b, sec_row_num)
 # sector_data = do.call(rbind, sector_list)
 # sector_data$name = sector_name
-# spy_temp = read.csv('./data/SPY.csv', stringsAsFactors = F)
-# spy = spy_temp %>%
-#   select(., -(Adj.Close))
-# spy$Name = rep('SPY', nrow(spy))
+spy_temp = read.csv('./data/SPY.csv', stringsAsFactors = F)
+spy = spy_temp %>%
+  select(., -(Adj.Close))
+spy$Name = rep('SPY', nrow(spy))
 # write.csv(sector_data, file = './data/sector_data.csv',row.names = F)
 
-#sector_data = read.csv('./data/sector_data.csv')
+sector_data = read.csv('./data/sector_data.csv')
 
 # Make stocks with Sector
 temp = con_cf %>% 
-  mutate(., name = gsub('Industrials', 'XLI', x = Sector, fixed = T)) %>% 
-  mutate(., name = gsub('Health Care', 'XLV', x = name, fixed = T)) %>% 
-  mutate(., name = gsub('Information Technology', 'XLK', x = name, fixed = T)) %>% 
-  mutate(., name = gsub('Consumer Staples', 'XLP', x = name, fixed = T)) %>% 
-  mutate(., name = gsub('Energy', 'XLE', x = name, fixed = T)) %>% 
-  mutate(., name = gsub('Financials', 'XLF', x = name, fixed = T)) %>% 
-  mutate(., name = gsub('Materials', 'XLB', x = name, fixed = T)) %>% 
-  mutate(., name = gsub('Real Estate', 'XLRE', x = name, fixed = T)) %>% 
-  mutate(., name = gsub('Utilities', 'XLU', x = name, fixed = T)) %>% 
-  mutate(., name = gsub('Consumer Discretionary', 'XLY', x = name, fixed = T)) %>% 
-  mutate(., name = gsub('Telecommunications Services', 'VOX', x = name, fixed = T)) 
+  mutate(., name = gsub('Industrials', 'XLI', x = Sector, fixed = T)) %>%
+  mutate(., name = gsub('Health Care', 'XLV', x = name, fixed = T)) %>%
+  mutate(., name = gsub('Information Technology', 'XLK', x = name, fixed = T)) %>%
+  mutate(., name = gsub('Consumer Staples', 'XLP', x = name, fixed = T)) %>%
+  mutate(., name = gsub('Energy', 'XLE', x = name, fixed = T)) %>%
+  mutate(., name = gsub('Financials', 'XLF', x = name, fixed = T)) %>%
+  mutate(., name = gsub('Materials', 'XLB', x = name, fixed = T)) %>%
+  mutate(., name = gsub('Real Estate', 'XLRE', x = name, fixed = T)) %>%
+  mutate(., name = gsub('Utilities', 'XLU', x = name, fixed = T)) %>%
+  mutate(., name = gsub('Consumer Discretionary', 'XLY', x = name, fixed = T)) %>%
+  mutate(., name = gsub('Telecommunications Services', 'VOX', x = name, fixed = T))
 temp = temp %>% 
   select(., Name = Symbol, Sector = name)
 stocks_w_sec = stocks %>% 
   left_join(., temp, by = "Name")
 stocks_w_spy = stocks_w_sec %>% 
-  select(., -c(Sector)) %>% 
-  rbind(., spy)
+ select(., -c(Sector)) %>% 
+ rbind(., spy)
 write.csv(stocks_w_sec, file = './data/stocks_w_sec.csv',row.names = F)
 
 # Make indicator with Sector
-temp = cf %>% 
-  mutate(., name = gsub('Industrials', 'XLI', x = Sector, fixed = T)) %>% 
-  mutate(., name = gsub('Health Care', 'XLV', x = name, fixed = T)) %>% 
-  mutate(., name = gsub('Information Technology', 'XLK', x = name, fixed = T)) %>% 
-  mutate(., name = gsub('Consumer Staples', 'XLP', x = name, fixed = T)) %>% 
-  mutate(., name = gsub('Energy', 'XLE', x = name, fixed = T)) %>% 
-  mutate(., name = gsub('Financials', 'XLF', x = name, fixed = T)) %>% 
-  mutate(., name = gsub('Materials', 'XLB', x = name, fixed = T)) %>% 
-  mutate(., name = gsub('Real Estate', 'XLRE', x = name, fixed = T)) %>% 
-  mutate(., name = gsub('Utilities', 'XLU', x = name, fixed = T)) %>% 
-  mutate(., name = gsub('Consumer Discretionary', 'XLY', x = name, fixed = T)) %>% 
-  mutate(., name = gsub('Telecommunications Services', 'VOX', x = name, fixed = T)) 
-indict_w_sec = temp %>% 
-  subset(., select = -c(SEC.Filings, Name, Sector)) %>% 
-  rename(., Sector = name) %>% 
-  na.aggregate.default(., FUN = median, na.rm = T)
-indict_w_sec$Price = as.numeric(indict_w_sec$Price)
-indict_w_sec$Dividend.Yield = as.numeric(indict_w_sec$Dividend.Yield)
-indict_w_sec$Price.Earnings = as.numeric(indict_w_sec$Price.Earnings)
-indict_w_sec$Earnings.Share = as.numeric(indict_w_sec$Earnings.Share)
-indict_w_sec$Book.Value = as.numeric(indict_w_sec$Book.Value)
-indict_w_sec$X52.week.low = as.numeric(indict_w_sec$X52.week.low)
-indict_w_sec$X52.week.high = as.numeric(indict_w_sec$X52.week.high)
-indict_w_sec$Market.Cap = as.numeric(indict_w_sec$Market.Cap)
-indict_w_sec$EBITDA = as.numeric(indict_w_sec$EBITDA)
-indict_w_sec$Price.Sales = as.numeric(indict_w_sec$Price.Sales)
-indict_w_sec$Price.Book = as.numeric(indict_w_sec$Price.Book)
-write.csv(indict_w_sec, file = './data/indict_w_sec.csv',row.names = F)
-
-df_add = data.frame(Name = c('S&P500'), Sector = c(NA),
-                    Volume = c(71955600), day_ret = c(0.66))
+# temp = cf %>% 
+#   mutate(., name = gsub('Industrials', 'XLI', x = Sector, fixed = T)) %>% 
+#   mutate(., name = gsub('Health Care', 'XLV', x = name, fixed = T)) %>% 
+#   mutate(., name = gsub('Information Technology', 'XLK', x = name, fixed = T)) %>% 
+#   mutate(., name = gsub('Consumer Staples', 'XLP', x = name, fixed = T)) %>% 
+#   mutate(., name = gsub('Energy', 'XLE', x = name, fixed = T)) %>% 
+#   mutate(., name = gsub('Financials', 'XLF', x = name, fixed = T)) %>% 
+#   mutate(., name = gsub('Materials', 'XLB', x = name, fixed = T)) %>% 
+#   mutate(., name = gsub('Real Estate', 'XLRE', x = name, fixed = T)) %>% 
+#   mutate(., name = gsub('Utilities', 'XLU', x = name, fixed = T)) %>% 
+#   mutate(., name = gsub('Consumer Discretionary', 'XLY', x = name, fixed = T)) %>% 
+#   mutate(., name = gsub('Telecommunications Services', 'VOX', x = name, fixed = T)) 
+# indict_w_sec = temp %>% 
+#   subset(., select = -c(SEC.Filings, Name, Sector)) %>% 
+#   rename(., Sector = name) %>% 
+#   na.aggregate.default(., FUN = median, na.rm = T)
+# indict_w_sec$Price = as.numeric(indict_w_sec$Price)
+# indict_w_sec$Dividend.Yield = as.numeric(indict_w_sec$Dividend.Yield)
+# indict_w_sec$Price.Earnings = as.numeric(indict_w_sec$Price.Earnings)
+# indict_w_sec$Earnings.Share = as.numeric(indict_w_sec$Earnings.Share)
+# indict_w_sec$Book.Value = as.numeric(indict_w_sec$Book.Value)
+# indict_w_sec$X52.week.low = as.numeric(indict_w_sec$X52.week.low)
+# indict_w_sec$X52.week.high = as.numeric(indict_w_sec$X52.week.high)
+# indict_w_sec$Market.Cap = as.numeric(indict_w_sec$Market.Cap)
+# indict_w_sec$EBITDA = as.numeric(indict_w_sec$EBITDA)
+# indict_w_sec$Price.Sales = as.numeric(indict_w_sec$Price.Sales)
+# indict_w_sec$Price.Book = as.numeric(indict_w_sec$Price.Book)
+# write.csv(indict_w_sec, file = './data/indict_w_sec.csv',row.names = F)
+# 
+# df_add = data.frame(Name = c('S&P500'), Sector = c(NA),
+#                     Volume = c(71955600), day_ret = c(0.66))
