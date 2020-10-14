@@ -33,20 +33,13 @@ ui <- fluidPage(
         #menuItem('Treemap', tabName = 'tm', icon = icon('map')),
         menuItem('TimeSeries', tabName = 'ts', icon = icon('line-chart'))
       ),
-      #dateInput('date', h3('Select date from the calendar'), 
-                #min = '2016-08-12', max = '2017-08-11',
-                #value = '2017-08-11'),
+
       selectizeInput('sector', h3('Sectors'), 
                      choices = na.omit(unique(stocks_w_sec$Sector)),
                      selected = 'XLI'),
-      #selectizeInput('indict', h3('Indicator'), 
-                    # choices = colnames(indict_w_sec)[3:5],
-                    # selected = 'Price.Earnings'),
       selectizeInput('price1', h3('Select Stocks'), 
                      choices = unique(stocks_w_spy$Name),
                      selected = 'MMM')
-     # textInput('price2', h3('Price2'),
-             # value = 'SPY')
       ###########
       ),
     dashboardBody(
@@ -74,31 +67,7 @@ ui <- fluidPage(
                   tabBox(title = tagList(shiny::icon("line-chart"), "Time Series"), width = 9,
                          tabPanel('Price',
                                   plotOutput('fit_stock')),
-                        # tabPanel('Correlation',
-                                  #fluidRow(
-                                   # box(h4(tags$b('ACF')), solidHeader = T, status = 'success',
-                                     #   'Auto correlation between time series and its own lag',
-                                      #  plotOutput('acf')),
-                                   # box(h4(tags$b('PACF')), solidHeader = T, status = 'success',
-                                      #  'Conditional auto correlation between time seires and its own lag',
-                                     #  plotOutput('pacf'))
-                                #  )),
-                        # tabPanel('Result',
-                                #  fluidRow(
-                                   # box('Residuals',
-                                    #    plotOutput('resid')),
-                                 #   box('Residuals Distribution',
-                                    #    plotOutput('resid_dis')),
-                                  #  tabBox(title = tagList(shiny::icon("info"), "Test Result"),
-                                    #      tabPanel('Ljung-Box Test',
-                                     #               textOutput('lbt')),
-                                      #     tabPanel('Shapiro Test',
-                                 #                   textOutput('spt'))
-                                 #   ),
-                                 #   box('Hist Bins input:',
-                                    #    sliderInput('resid_hist', 'Bins',
-                                                 #   min = 20, max = 60, value = 30))
-                               #   )),
+                       
                          tabPanel('Forecast',
                                   fluidRow(
                                     box('Forecast',
@@ -119,112 +88,7 @@ server <- function(input, output, session) {
     datatable(stocks_w_sec, rownames = F)
   },striped = TRUE, bordered = TRUE)
   
-  # observe({
-  #   st = na.omit(unique(stocks_w_spy$Name[stocks_w_sec$Sector == input$sector]))
-  #   updateSelectInput(
-  #     session, 'price1',
-  #     choices = st,
-  #     selected = st[1])
-  # })
-  
-  # d = reactive({
-  #   url = input$url
-  #   webpage = read_html(url)
-  #   boxx = html_node(webpage, '#articleText')
-  #   boxx_text = html_text(boxx)
-  #   test = trimws(boxx_text)
-  #   myCorpus = Corpus(VectorSource(test))
-  #   myCorpus = tm_map(myCorpus, content_transformer(tolower))
-  #   myCorpus = tm_map(myCorpus, removePunctuation)
-  #   myCorpus = tm_map(myCorpus, removeNumbers)
-  #   myCorpus = tm_map(myCorpus, removeWords, c(stopwords("english"), 'free', 'report', 'stock'))
-  #   dtm <- TermDocumentMatrix(myCorpus)
-  #   m <- as.matrix(dtm)
-  #   v <- sort(rowSums(m),decreasing=TRUE)
-  #   d <- data.frame(word = names(v),freq=v)
-  # })
-  # 
-  # tree_sec = reactive({
-  #   sector_data %>% 
-  #     mutate(., day_ret = (close - open) / open * 100) %>% 
-  #     select(., Name = name, Date = timestamp, Volume = volume, day_ret) %>% 
-  #     filter(., is.null(day_ret) == F) %>% 
-  #     mutate(., Sector = 'S&P500') %>% 
-  #     filter(., as.character(Date) == as.character(input$date)) %>% 
-  #     mutate(., Parent_f = factor(Sector), Name_f = factor(Name)) %>% 
-  #     select(., Name_f, Parent_f, Volume, day_ret, -c(Name, Sector)) %>% 
-  #     rename(., Name = Name_f, Parent = Parent_f)
-  # })
-  # 
-  # tree_stock = reactive({
-  #   stocks_w_sec %>% 
-  #     arrange(., desc(Date)) %>% 
-  #     mutate(., day_ret = (Close - Open) / Open * 100) %>% 
-  #     select(., Name, Sector, Volume, day_ret, Date) %>% 
-  #     filter(., is.null(day_ret) == F) %>% 
-  #     na.omit(.) %>% 
-  #     filter(., as.character(Date) == as.character(input$date)) %>% 
-  #     select(., -Date) %>% 
-  #     rbind(., df_add) %>% 
-  #     rename(., Parent = Sector) %>% 
-  #     arrange(., Parent) %>% 
-  #     mutate(., Parent_f = factor(Parent), Name_f = factor(Name)) %>% 
-  #     select(., Name_f, Parent_f, Volume, day_ret, -c(Name, Parent)) %>% 
-  #     rename(., Name = Name_f, Parent = Parent_f)
-  # })
-  # 
-  # ret_day = reactive({
-  #   rbind(tree_sec(), tree_stock()) %>% 
-  #     arrange(., Parent)
-  # })
-  # 
-  # indict_selected = reactive({
-  #   indict_w_sec %>%
-  #     filter(., Sector == input$sector) %>% 
-  #     select(., -Sector, -Price.Book, -Price.Sales)
-  # })
-  # 
-  # cor_selected = reactive({
-  #   stocks_w_sec %>% 
-  #     select(., Date, Name, Close, Sector) %>%
-  #     filter(., Sector == input$sector) %>% 
-  #     select(., -Sector) %>% 
-  #     spread(., key = Name, value = Close) %>% 
-  #     mutate(., SPY = spy$Close) %>% 
-  #     select(., -Date) %>% 
-  #     cor(.) %>% 
-  #     round(., 3)
-  # })
-  # 
-  # stock_selected1 = reactive({
-  #   stocks_w_spy %>% 
-  #     filter(., Name == input$price1) %>% 
-  #     select(., Date, Open, High, Low, Close) %>%
-  #     na.omit(.) %>% 
-  #     mutate(., SMA1 = SMA(Close, n = input$sma1)) %>% 
-  #     mutate(., SMA2 = SMA(Close, n = input$sma2)) %>% 
-  #     column_to_rownames(.)
-  # })
-  
-  # stock_selected2 = reactive({
-  #   if (input$price2 != '') {
-  #     stocks_w_spy %>% 
-  #       filter(., Name == input$price2) %>% 
-  #       select(., Date, Open, High, Low, Close) %>%
-  #       na.omit(.) %>% 
-  #       mutate(., SMA1 = SMA(Close, n = input$sma1)) %>% 
-  #       mutate(., SMA2 = SMA(Close, n = input$sma2)) %>% 
-  #       column_to_rownames(.)
-  #   } else {
-  #     stocks_w_spy %>% 
-  #       filter(., Name == "SPY") %>% 
-  #       select(., Date, Open, High, Low, Close) %>%
-  #       na.omit(.) %>% 
-  #       mutate(., SMA1 = SMA(Close, n = input$sma1)) %>% 
-  #       mutate(., SMA2 = SMA(Close, n = input$sma2)) %>% 
-  #       column_to_rownames(.)
-  #   }
-  # })
+ 
   ## data fitting
   fit_data = reactive({
     stocks_w_spy %>% 
@@ -244,61 +108,6 @@ server <- function(input, output, session) {
       as.ts(.) %>% 
       Arima(., order = c(input$ar, input$diff, input$ma))
   })
-  # 
-  # output$word = renderPlot({
-  #   wordcloud(words = d()$word, freq = d()$freq, scale = c(4, 0.5), random.order = F,
-  #             min.freq = 1, max.words=300, colors=brewer.pal(8, "Dark2"),
-  #             rot.per = 0.5)
-  # })
-  # 
-  # output$tree = renderGvis({
-  #   gvisTreeMap(ret_day(),
-  #               idvar = 'Name', parentvar = 'Parent', 
-  #               sizevar = 'Volume', colorvar = 'day_ret',
-  #               options = list(
-  #                 showScale = T,
-  #                 highlightOnMouseOver = T,
-  #                 height = 300,
-  #                 maxDepth = 1,
-  #                 maxPostDepth = 2,
-  #                 minColor = 'red',
-  #                 maxColor = 'green'
-  #               ))
-  # })
-  
-  # output$price = renderDygraph({
-  #   dygraph(stock_selected1(), main = input$price1, group = 'my_stocks') %>%
-  #     dyCandlestick() %>%
-  #     dyLegend(show = 'follow', hideOnMouseOut = T) %>% 
-  #     dyRangeSelector(retainDateWindow = T) 
-  # })
-  # 
-  # output$spy = renderDygraph({
-  #   if (input$price2 != '') {
-  #     dygraph(stock_selected2(), main = input$price2, group = 'my_stocks') %>% 
-  #       dyCandlestick() %>% 
-  #       dyLegend(show = 'always', hideOnMouseOut = T) %>% 
-  #       dyRangeSelector(retainDateWindow = T)
-  #   } else {
-  #     dygraph(stock_selected2(), main = 'SPY', group = 'my_stocks') %>% 
-  #       dyCandlestick() %>% 
-  #       dyLegend(show = 'always', hideOnMouseOut = T) %>% 
-  #       dyRangeSelector(retainDateWindow = T)
-  #   }
-  # })
-  
-  # output$bar = renderPlotly({
-  #   plot_ly(x = indict_selected()[,'Symbol'], 
-  #           y = indict_selected()[, input$indict], type = 'bar' ) %>% 
-  #     layout(title = "",
-  #            xaxis = list(title = ""),
-  #            yaxis = list(title = input$indict))
-  # })
-  # 
-  # output$corr = renderPlotly({
-  #   plot_ly(x = rownames(cor_selected()), y = colnames(cor_selected()),
-  #           z = cor_selected(), type = 'heatmap') 
-  #})
   #### price of stocks 
   output$fit_stock = renderPlot({
     if (input$diff == 0) {
@@ -329,28 +138,6 @@ server <- function(input, output, session) {
     }
   })
   
-  # output$resid = renderPlot({
-  #   ggplot() + geom_point(aes(x = 1:200, 
-  #                             y = residuals(fit_model())), alpha = 0.7) +
-  #     geom_smooth(aes(x = 1:200, y = residuals(fit_model()))) +
-  #     ylab('Residuals') + xlab('period')
-  # })
-  # 
-  # output$resid_dis = renderPlot({
-  #   ggplot(data = data.frame(res = residuals(fit_model())), aes(x = res)) + 
-  #     geom_histogram(aes(y = ..density..), 
-  #                    bins = input$resid_hist, 
-  #                    col = 'red', alpha = 0.5, fill = 'red') + 
-  #     geom_density(aes(y = ..density..), col = 'blue')
-  # })
-  
-  # output$lbt = renderPrint({
-  #   checkresiduals(fit_model(), plot = F)
-  # })
-  # 
-  # output$spt = renderPrint({
-  #   shapiro.test(residuals(fit_model()))
-  # })
 #### following is the forecast graph code - 
   output$fore = renderPlot({
     plot(forecast(fit_model(), h = 50))
