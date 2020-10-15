@@ -1,3 +1,4 @@
+source('global.r')
 library(shiny)
 library(googleVis)
 library(quantmod)
@@ -19,6 +20,7 @@ library(tm)
 library(SnowballC)
 library(wordcloud)
 library(rvest)
+
 # Define UI ----
 ui <- fluidPage(
   dashboardPage (

@@ -18,11 +18,11 @@ library(tm)
 library(SnowballC)
 library(wordcloud)
 library(rvest)
-
+library(here)
 # Load stock, sector information and indicators
-cf = read.csv('./data/con_f.csv', stringsAsFactors = F)
-con_cf = read.csv('./data/_con.csv', stringsAsFactors = F)
-stocks = read.csv('./data/all_stocks_1yr.csv', stringsAsFactors = F)
+cf = read.csv('data/con_f.csv', stringsAsFactors = F)
+con_cf = read.csv('data/_con.csv', stringsAsFactors = F)
+stocks = read.csv('data/all_stocks_1yr.csv', stringsAsFactors = F)
 
 # Load sector data
 # a = "XLY,XLP,XLE,XLF,XLV,XLI,XLB,XLRE,XLK,XLU,VOX"
@@ -43,13 +43,13 @@ stocks = read.csv('./data/all_stocks_1yr.csv', stringsAsFactors = F)
 # sector_name = rep(b, sec_row_num)
 # sector_data = do.call(rbind, sector_list)
 # sector_data$name = sector_name
-spy_temp = read.csv('./data/SPY.csv', stringsAsFactors = F)
+spy_temp = read.csv('data/SPY.csv', stringsAsFactors = F)
 spy = spy_temp %>%
   select(., -(Adj.Close))
 spy$Name = rep('SPY', nrow(spy))
-# write.csv(sector_data, file = './data/sector_data.csv',row.names = F)
+# write.csv(sector_data, file = 'data/sector_data.csv',row.names = F)
 
-sector_data = read.csv('./data/sector_data.csv')
+sector_data = read.csv('data/sector_data.csv')
 
 # Make stocks with Sector
 temp = con_cf %>% 
@@ -71,7 +71,7 @@ stocks_w_sec = stocks %>%
 stocks_w_spy = stocks_w_sec %>% 
  select(., -c(Sector)) %>% 
  rbind(., spy)
-write.csv(stocks_w_sec, file = './data/stocks_w_sec.csv',row.names = F)
+write.csv(stocks_w_sec, file = 'data/stocks_w_sec.csv',row.names = F)
 
 # Make indicator with Sector
 # temp = cf %>% 
@@ -101,7 +101,7 @@ write.csv(stocks_w_sec, file = './data/stocks_w_sec.csv',row.names = F)
 # indict_w_sec$EBITDA = as.numeric(indict_w_sec$EBITDA)
 # indict_w_sec$Price.Sales = as.numeric(indict_w_sec$Price.Sales)
 # indict_w_sec$Price.Book = as.numeric(indict_w_sec$Price.Book)
-# write.csv(indict_w_sec, file = './data/indict_w_sec.csv',row.names = F)
+# write.csv(indict_w_sec, file = 'data/indict_w_sec.csv',row.names = F)
 # 
 # df_add = data.frame(Name = c('S&P500'), Sector = c(NA),
 #                     Volume = c(71955600), day_ret = c(0.66))

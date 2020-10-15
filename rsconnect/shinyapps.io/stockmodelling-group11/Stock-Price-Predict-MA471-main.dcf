@@ -1,0 +1,12 @@
+name: Stock-Price-Predict-MA471-main
+title: Stock-Price-Predict-MA471-main
+username:
+account: stockmodelling-group11
+server: shinyapps.io
+hostUrl: https://api.shinyapps.io/v1
+appId: 3019620
+bundleId: 3742990
+url: https://stockmodelling-group11.shinyapps.io/Stock-Price-Predict-MA471-main/
+when: 1602736215.30048
+asMultiple: FALSE
+asStatic: FALSE
