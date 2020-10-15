@@ -27,12 +27,9 @@ ui <- fluidPage(
     skin = "green",
     dashboardHeader(title = 'Stock Price Predictor', titleWidth = 230),
     dashboardSidebar(
-      sidebarUserPanel(h2("S&P500")
-                       ),
+      sidebarUserPanel(h2("S&P500")),
       sidebarMenu(
         menuItem('Data', tabName = 'dt', icon = icon('database')),
-        #menuItem('WordCloud', tabName = 'cv', icon = icon('commenting')),
-        #menuItem('Treemap', tabName = 'tm', icon = icon('map')),
         menuItem('TimeSeries', tabName = 'ts', icon = icon('line-chart'))
       ),
 
