@@ -66,6 +66,15 @@ ui <- fluidPage(
                   tabBox(title = tagList(shiny::icon("line-chart"), "Time Series"), width = 9,
                          tabPanel('Price',
                                   plotOutput('fit_stock')),
+                          tabPanel('Correlation',
+                               fluidRow(
+                                 box(h4(tags$b('ACF')), solidHeader = T, status = 'success',
+                                     'Auto correlation between time series and its own lag',
+                                     plotOutput('acf')),
+                                 box(h4(tags$b('PACF')), solidHeader = T, status = 'success',
+                                     'Conditional auto correlation between time seires and its own lag',
+                                     plotOutput('pacf'))
+                               )),
                        
                          tabPanel('Forecast',
                                   fluidRow(
